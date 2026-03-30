@@ -1,0 +1,384 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+    /* Nature-inspired Animalist Palette */
+    --clr-sunset: #e65c00;
+    --clr-sunset-light: #f9a03f;
+    --clr-forest: #2b4c3b;
+    --clr-earth: #4d3a2e;
+    --clr-sand: #f0e6d2;
+    --clr-bg: #121212;
+    /* Dark Mode Base */
+    --clr-surface: rgba(129, 129, 129, 0.08);
+    --clr-surface-light: rgba(129, 129, 129, 0.15);
+
+    /* Structural */
+    --glass-blur: blur(12px);
+    --border-radius-lg: 16px;
+    --border-radius-sm: 8px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--clr-bg);
+    color: var(--clr-sand);
+    overflow: hidden;
+    /* Prevent global scrolling, keep map fixed */
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Base Background Image */
+#background-img {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 1;
+    /* Behind everything */
+    opacity: 0.7;
+    transition: opacity var(--transition-speed);
+}
+
+#background-img.dimmed {
+    opacity: 0.2;
+    /* Dim background image when map is active */
+}
+
+#background-murcielago {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    height: auto;
+    /*border-radius: 50%;*/
+    z-index: 2;
+}
+
+#background-calabaza {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: auto;
+    z-index: 2;
+}
+
+/*
+.aparece {
+    animation: aparecer 3s infinite;
+}
+@keyframes aparecer {
+    0% {
+        opacity: 0;
+    }
+    33% {
+        opacity: 1;
+    }
+    66% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+*/
+#background-fantasma {
+    position: absolute;
+    top: 72%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: auto;
+    z-index: 5;
+}
+
+/* Map Container */
+#map-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    /* Above background, below UI */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed);
+}
+
+#map-container.map-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+#map-container svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: white;
+    /*background-color: #cdcdcd;*/
+    pointer-events: auto;
+    /* Ensure map receives pan/zoom events */
+    touch-action: none;
+    /* Prevent default browser scrolling when touching the map */
+}
+
+/* UI Overlay Layer */
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    pointer-events: none;
+    /* Let clicks pass through empty space to the map */
+}
+
+/* Make actual UI elements clickable inside the layer */
+.glass-panel,
+.hover-effect,
+#auth-container {
+    pointer-events: auto;
+}
+
+/* UI Overlay Container (Glassmorphism Base) */
+.glass-panel {
+    background: var(--clr-surface);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+}
+
+#total-participantes2 {
+    animation: aparece 5s infinite;
+}
+
+@keyframes aparece {
+    0% {
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Registration CTA Menu */
+#registro-menu {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--clr-sunset), var(--clr-sunset-light));
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    /* Pill shape for organic feel */
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(230, 92, 0, 0.4);
+    transition: all var(--transition-speed) ease;
+    border: 2px solid transparent;
+    pointer-events: auto;
+    /* Clickable */
+}
+
+#registro-menu:hover {
+    transform: translateX(-50%) translateY(-5px);
+    box-shadow: 0 8px 25px rgba(230, 92, 0, 0.6);
+    background: linear-gradient(135deg, var(--clr-sunset-light), var(--clr-sunset));
+}
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    /* Instead of relying only on opacity */
+    pointer-events: none;
+    transition: opacity var(--transition-speed);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    /* Active modal blocks underlying UI */
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 400px;
+    transform: translateY(20px);
+    transition: transform var(--transition-speed);
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-title {
+    margin-top: 0;
+    color: var(--clr-sunset-light);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--clr-sand);
+    font-weight: 300;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-sm);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--clr-sunset-light);
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background: var(--clr-forest);
+    color: var(--clr-sand);
+}
+
+.btn-primary:hover {
+    background: #3a634e;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--clr-sunset);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 10px;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Auth Container (Top Right) */
+#auth-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 20;
+    display: flex;
+    gap: 10px;
+}
+
+.auth-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--clr-sunset), var(--clr-sunset-light));
+    /*background: var(--clr-surface);*/
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--clr-sand);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(226, 115, 24, 0.911);
+}
+
+.auth-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 25px rgba(231, 136, 28, 0.87);
+    background: linear-gradient(135deg, var(--clr-sunset-light), var(--clr-sunset));
+    /*background: rgba(255, 255, 255, 0.2);*/
+}
+
+/* Admin Panel */
+#admin-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+    display: none;
+    /* Hidden by default */
+}
+
+/* Helper Classes */
+.hidden {
+    display: none !important;
+}
+
+.error-msg {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    display: none;
+}
+
+#map-controls .auth-btn {
+    box-shadow: 0 4px 15px rgba(37, 36, 36, 0.4);
+}

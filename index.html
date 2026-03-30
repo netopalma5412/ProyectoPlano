@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Pinar - Viviendas Interactivas</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <!--<link rel="preload" href="disignimpo/Pinares1.jpg" as="stylesheet">-->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- SVG Pan Zoom Script -->
+    <script src="https://unpkg.com/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <!-- Background Nature Image -->
+    <img id="background-img" src="disignimpo/Pinares2.jpg" alt="Atardecer en Pinar">
+    <img id="background-murcielago" src="disignimpo/MurcielagoMove.gif" alt="Murcielago">
+    <img id="background-calabaza" class="aparece" src="disignimpo/CalabazaConNombA.png" alt="Calabaza2">
+    <img id="background-fantasma" src="disignimpo/FantasmaG.gif" alt="fantasma">
+    <!-- SVG Map Container (Hidden by default until requested or logged in) -->
+    <div id="map-container" class="map-hidden"></div>
+
+    <!-- UI Overlay container to ensure clicks work (z-index) -->
+    <div id="ui-layer">
+
+        <!-- Top Left: Admin Panel (Hidden by default) -->
+        <div id="admin-panel" class="glass-panel" style="display: none;">
+            <h3 style="margin-top: 0; color: var(--clr-sunset-light);">Panel Admin</h3>
+            <button class="btn btn-secondary" id="btn-toggle-route">Ocultar/Mostrar Ruta</button>
+            <button class="btn btn-secondary" id="btn-reset-colors"
+                style="border-color: #ffd32a; color: #e65c00; margin-top: 5px;">Limpiar Colores (Fin
+                participacion)</button>
+            <button class="btn btn-secondary" id="btn-reset-event"
+                style="border-color: #ff6b6b; color: #ff6b6b; margin-top: 5px;">Resetear Evento</button>
+        </div>
+
+        <!-- Top Right: Auth Controls & View Map -->
+        <div id="auth-container">
+            <button id="btn-view-map" class="auth-btn">Ver Plano sin registrarse</button>
+            <button id="btn-admin" class="auth-btn hidden"
+                style="background: rgba(255, 211, 42, 0.2); border-color: #ffd32a; color: #ffd32a;">Panel Admin</button>
+            <button id="btn-logout" class="auth-btn hidden">Cerrar Sesión</button>
+        </div>
+
+        <!-- Bottom Left: Total Participantes -->
+        <div id="total-participantes" class="glass-panel"
+            style="display: none; position: absolute; bottom: 20px; left: 20px; font-weight: bold; color: var(--clr-sunset-light); z-index: 100; font-size: 1.1rem; border-radius: 8px; padding: 10px 20px;">
+            Total de viviendas participantes = <span id="contador-viviendas">0</span>
+        </div>
+
+        <div id="total-participantes2" class="glass-panel"
+            style="display: none; position: absolute; top: 80px; left: 20px; font-weight: bold; color: var(--clr-sunset-light); z-index: 100; font-size: 1.1rem; border-radius: 8px; padding: 10px 20px;">
+            Halloween Pinares
+            <br>
+            31 de Octubre 6:30 P.M.
+            <br>
+            Salidas: Puntos A y B.
+        </div>
+
+        <!-- Bottom Center: Call to Action -->
+        <div id="registro-menu" class="hover-effect">
+            Registrar su vivienda para participar, hacer click aquí
+        </div>
+
+        <!-- MODAL: Authentication (OTP) -->
+        <div id="modal-auth" class="modal-overlay">
+            <div class="glass-panel modal-content">
+                <h2 class="modal-title">Acceso Residentes</h2>
+
+                <!-- Step 1: Request OTP -->
+                <div id="auth-step-1">
+                    <p style="font-size: 0.9rem; margin-bottom: 20px;">Ingrese su correo para recibir un código de
+                        acceso.</p>
+                    <div class="form-group">
+                        <label for="auth-email">Correo Electrónico</label>
+                        <input type="email" id="auth-email" class="form-input" placeholder="ejemplo@correo.com"
+                            autocomplete="off">
+                    </div>
+                    <button id="btn-request-otp" class="btn btn-primary">Enviar Código</button>
+                </div>
+
+                <!-- Step 2: Verify OTP -->
+                <div id="auth-step-2" class="hidden">
+                    <p style="font-size: 0.9rem; margin-bottom: 20px;">Se ha enviado un código a su correo.</p>
+                    <div class="form-group">
+                        <label for="auth-otp">Código de 6 dígitos</label>
+                        <input type="text" id="auth-otp" class="form-input" placeholder="123456" maxlength="6"
+                            autocomplete="off">
+                    </div>
+                    <button id="btn-verify-otp" class="btn btn-primary">Verificar e Ingresar</button>
+                </div>
+
+                <p id="auth-error" class="error-msg"></p>
+                <button class="btn btn-secondary btn-close-modal">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL: Registration Form -->
+        <div id="modal-registro" class="modal-overlay">
+            <div class="glass-panel modal-content">
+                <h2 class="modal-title">Registro de Vivienda</h2>
+                <p style="font-size: 0.9rem; margin-bottom: 20px;">Vincule su identificador de vivienda para ser parte
+                    de la ruta del evento.</p>
+
+                <div class="form-group">
+                    <label for="reg-email">Correo Electrónico</label>
+                    <input type="email" id="reg-email" class="form-input" autocomplete="off">
+                    <small style="color: rgba(255,255,255,0.5)">Use su correo de residente</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-casa">Identificador de Vivienda</label>
+                    <input type="text" id="reg-casa" class="form-input" placeholder="Ej. P14-V4" autocomplete="off">
+                </div>
+
+                <p id="reg-error" class="error-msg"></p>
+                <button id="btn-submit-registro" class="btn btn-primary">Registrar Participación</button>
+                <button class="btn btn-secondary btn-close-modal">Cancelar</button>
+            </div>
+        </div>
+
+    </div> <!-- End UI Layer -->
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/map-engine.js"></script>
+    <script src="js/routing.js"></script>
+</body>
+
+</html>

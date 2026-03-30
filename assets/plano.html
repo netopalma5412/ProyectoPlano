@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano Pinares de Suiza – Zoom Mejorado</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        #map-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #map-container svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <script src="https://unpkg.com/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+</head>
+
+<body>
+    <div id="map-container"></div>
+
+    <div class="controls">
+        <button onclick="panZoom.zoomIn()">&nbsp;&nbsp;+&nbsp;&nbsp;</button>
+        <button onclick="panZoom.zoomOut()">&nbsp;&nbsp;-&nbsp;&nbsp;</button>
+        <button onclick="panZoom.resetZoom()">Reset</button>
+        <p></p>
+        <p style="margin: 0; font-size: 14px;">Signo + : Acercar imagen</p>
+        <p style="margin: 0; font-size: 14px;">Signo - : Alejar imagen</p>
+        <p style="margin: 0; font-size: 14px;">Reset: reinicia zoom</p>
+    </div>
+
+    <script>
+        let panZoom;
+
+        fetch('https://cdn.jsdelivr.net/gh/netopalma5412/ArchivoNvoSVG1@master/Desktop/ArchivoNvoSVG/PinarAI5.svg')
+            .then(res => res.text())
+            .then(svgText => {
+                document.getElementById('map-container').innerHTML = svgText;
+
+                panZoom = svgPanZoom('#map-container svg', {
+                    zoomEnabled: true,
+                    controlIconsEnabled: false,     // ocultamos los controles por defecto (usamos los nuestros)
+                    zoomScaleSensitivity: 0.65,     // sensibilidad del pinch (ajusta si es muy rápido/lento)
+                    minZoom: 0.3,                   // permite zoom out amplio
+                    maxZoom: 20,                    // zoom in muy alto para detalles
+                    panEnabled: true,
+                    dblClickZoomEnabled: false,     // evita zoom accidental con doble tap
+                    preventMouseEventsDefault: true
+                });
+            })
+            .catch(err => console.error('Error cargando SVG:', err));
+    </script>
+</body>
+
+</html>

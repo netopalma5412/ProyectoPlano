@@ -1,0 +1,17 @@
+*.svg binary
+# Manejo automático de archivos de texto
+# Git detectará qué es texto y convertirá los finales de línea a LF al hacer commit
+* text=auto
+
+# Forzar que archivos específicos siempre usen LF (ideal para producción/servidores)
+*.css  text eol=lf
+*.js   text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+
+# Denotar archivos binarios (estos no deben ser tocados por Git)
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
