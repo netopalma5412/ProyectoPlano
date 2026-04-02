@@ -134,14 +134,14 @@ async function fetchAndColorizeActiveHouses() {
             colorizeHouse(v.id, '#ff4757'); // A vibrant red-orange nature color
         });
     }
-    
+
     // Update the counter on initial load
     if (window.updateTotalCounter) {
         window.updateTotalCounter();
     }
 }
 
-window.updateTotalCounter = async function() {
+window.updateTotalCounter = async function () {
     const { data, error } = await window.supabaseClient
         .from('viviendas')
         .select('Sumar')
@@ -182,7 +182,7 @@ function listenToSupabaseChanges() {
                         window.calculateAndDrawRoute();
                     }
                 }
-                
+
                 // Update the total counter when any change happens
                 if (window.updateTotalCounter) {
                     window.updateTotalCounter();
