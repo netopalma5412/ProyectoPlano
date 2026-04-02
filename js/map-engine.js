@@ -43,10 +43,10 @@ async function loadMap() {
 
 function addZoomControls() {
     const controlsHtml = `
-        <div id="map-controls" class="hidden" style="position: absolute; bottom: 80px; right: 20px; z-index: 30; display: flex; flex-direction: column; gap: 15px; pointer-events: auto;">
-            <button class="auth-btn" id="ctrl-zoom-in" style="font-size: 24px; padding: 15px 25px; background: rgba(0,0,0,0.7); color: white;">+</button>
-            <button class="auth-btn" id="ctrl-zoom-out" style="font-size: 24px; padding: 15px 25px; background: rgba(0,0,0,0.7); color: white;">-</button>
-            <button class="auth-btn" id="ctrl-zoom-reset" style="font-size: 18px; padding: 15px 25px; background: rgba(0,0,0,0.7); color: white;">R</button>
+        <div id="map-controls" class="hidden" style="position: absolute; bottom: 80px; right: 20px; z-index: 30; display: flex; flex-direction: column; gap: 10px; pointer-events: auto;">
+            <button class="auth-btn" id="ctrl-zoom-in" style="font-size: 20px; padding: 8px 20px; background: rgba(0,0,0,0.7); color: white;">+</button>
+            <button class="auth-btn" id="ctrl-zoom-out" style="font-size: 20px; padding: 8px 20px; background: rgba(0,0,0,0.7); color: white;">-</button>
+            <button class="auth-btn" id="ctrl-zoom-reset" style="font-size: 18px; padding: 8px 20px; background: rgba(0,0,0,0.7); color: white;">R</button>
         </div>
     `;
     // We append to map-container or directly to body, but body is fine as long as z-index is high.
