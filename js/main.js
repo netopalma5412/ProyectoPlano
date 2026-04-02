@@ -131,9 +131,13 @@ function showMap() {
     if (totalParticipantes) {
         totalParticipantes.style.display = 'block';
     }
-    const totalParticipantes2 = document.getElementById('total-participantes2');
-    if (totalParticipantes2) {
-        totalParticipantes2.style.display = 'block';
+    const Rotulo = document.getElementById('Rotulo');
+    if (Rotulo) {
+        Rotulo.style.display = 'block';
+    }
+    const logo = document.getElementById('logo');
+    if (logo) {
+        logo.style.display = 'block';
     }
 
     // Attempt to resize map to fit screen now that it's visible

@@ -163,7 +163,13 @@ body {
     padding: 24px;
 }
 
-#total-participantes2 {
+#logo img {
+    width: 70px;
+    height: auto;
+    padding: 0px 12px 0px 0px;
+}
+
+#Rotulo {
     animation: aparece 5s infinite;
 }
 
